@@ -34,7 +34,7 @@ const bridgeWallet = "0xbc744b31cf49d3e065bc7571bc7bff40fd92dbbd";
 const bridgeMaster = "0x72314d50E29fE4C57c656489aA8eF95A16a18FA3";
 const feeReceiver = "0x329f5712d601F32a73CEA18C893fCF37B204261c";
 
-const bwKey = process.env.BRIDGE_Wallet_KEY;
+const bwKey = process.env.BRIDGE_WALLET_KEY;
 const bmKey = process.env.BRIDGE_MASTER_KEY;
 const frKey = process.env.FEE_RECEIVER_KEY;
 
