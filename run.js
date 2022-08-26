@@ -6,33 +6,33 @@ Object.assign(process.env, env);
 const ethers = require("ethers");
 let timer;
 
+const bscRyzr = "0x5A9F325209743B6fF75d2E9545D84929e50e8ac6";
+const bscBridge = "0x4021f441B11e2A2E982665F950724DacD816b88c";
 const bscRouter = "0x46Ab076929E4fbdFBA490D96D44a47Cf7FCeD06c";
-const bscRyzr = "0x5291259eD925Cd5EF21A025077d51e0b41D06A60";
-const bscBridge = "0xc1fDFd9b75E7C6ea0E3a217838f3A641076552aF";
 
-const ethRouter = "0x694C2d76e6A4aF3E515bdA7b57014f909Ec388e5";
-const ethRyzr = "0xe15cde69078a5ccFf4A686EC19cE0365ae97668E";
-const ethBridge = "0xE4Ec7257F47348507456803Be3068781f5D88369";
+const ethRyzr = "0x5A9F325209743B6fF75d2E9545D84929e50e8ac6";
+const ethBridge = "0x4021f441B11e2A2E982665F950724DacD816b88c"; 
+const ethRouter = "0x3e74f784Ccb536C0cD25F589a4EcC1DC35f0C894";
 
-const polygonRyzr = "0xE743A706227d30131309a96c61409dd9764A95d4";
-const polygonBridge = "0xa06137e8eD81fE2382aca6202194ddD2263e2dbb";
+const polygonRyzr = "0x5A9F325209743B6fF75d2E9545D84929e50e8ac6";
+const polygonBridge = "0x4021f441B11e2A2E982665F950724DacD816b88c";
 const polygonRouter = "0x56a20168571ef89F87Bb21f55daFb0413eaD8e79";
 
-const avaxRyzr = "0x12Dbbf2A3446fe7D6BBebD66B8d7a13C3B0C35B9";
-const avaxBridge = "0x39FE10b7C3C0Be3586821e6B1Bc5893075B6F62B";
+const avaxRyzr = "0x5A9F325209743B6fF75d2E9545D84929e50e8ac6";
+const avaxBridge = "0x4021f441B11e2A2E982665F950724DacD816b88c";
 const avaxRouter = "0x964f1497B8Af8fC7420D1C33FE6B9516EE759c95";
 
-const croRyzr = "0xe15cde69078a5ccFf4A686EC19cE0365ae97668E";
-const croBridge = "0xE4Ec7257F47348507456803Be3068781f5D88369";
+const croRyzr = "0x5A9F325209743B6fF75d2E9545D84929e50e8ac6";
+const croBridge = "0x4021f441B11e2A2E982665F950724DacD816b88c";
 const croRouter = "0x694C2d76e6A4aF3E515bdA7b57014f909Ec388e5";
 
-const ftmRyzr = "0xE4Ec7257F47348507456803Be3068781f5D88369";
-const ftmBridge = "0x863D0312510df0dF087BF2362C89892Be00fAE77";
-const ftmRouter = "0x694C2d76e6A4aF3E515bdA7b57014f909Ec388e5";
+const ftmRyzr = "0x5A9F325209743B6fF75d2E9545D84929e50e8ac6";
+const ftmBridge = "0x4021f441B11e2A2E982665F950724DacD816b88c";
+const ftmRouter = "0x989979Ba6a12F2228dA2C53CD617a3d42e12AaeA";
 
-const bridgeWallet = "0xbc744b31cf49d3e065bc7571bc7bff40fd92dbbd";
-const bridgeMaster = "0x72314d50E29fE4C57c656489aA8eF95A16a18FA3";
-const feeReceiver = "0x329f5712d601F32a73CEA18C893fCF37B204261c";
+const bridgeWallet = "0x35d69366932a89483BD77946847Fc6a5730366BC";
+const bridgeMaster = "0x5baE3EF5d9F6319dc53F6f50AdDAE668f293Bd88";
+const feeReceiver = "0xD0b5B5c4e04D67096dDa0b779a5dF5DA8eE4e047";
 
 const bwKey = process.env.BRIDGE_WALLET_KEY;
 const bmKey = process.env.BRIDGE_MASTER_KEY;
@@ -53,7 +53,7 @@ const bscMasterSigner = new ethers.Wallet(bmKey, bscProvider);
 const bscFeeSigner = new ethers.Wallet(frKey, bscProvider);
 
 const ethProvider = new ethers.providers.JsonRpcProvider(
-  "https://rinkeby.infura.io/v3/15c1d32581894b88a92d8d9e519e476c"
+  "https://cloudflare-eth.com"
 );
 const ethSigner = new ethers.Wallet(bwKey, ethProvider);
 const ethMasterSigner = new ethers.Wallet(bmKey, ethProvider);
@@ -167,12 +167,11 @@ const handleFeesBNB = async () => {
   try {
     const bnbFeeBalance = await bscTokenInstance.balanceOf(feeReceiver);
     const formattedBnbFeeBalance = ethers.utils.formatUnits(bnbFeeBalance, "9");
-    console.log(formattedBnbFeeBalance + " bnb fee balance");
+    console.log(formattedBnbFeeBalance + " BSC fee receiver RYZR token balance");
 
     // BSC - deals with selling fee receiver's tokens
-    if (Number(formattedBnbFeeBalance) > 200) {
-      // change to 1000
-      const tradeAmount = ethers.utils.parseUnits("200", "9"); // change from 200 to 1000
+    if (Number(formattedBnbFeeBalance) > 1000) {
+      const tradeAmount = ethers.utils.parseUnits("1000", "9");
       const sellTokens =
         await bscRouterInstance.swapExactTokensForETHSupportingFeeOnTransferTokens(
           tradeAmount,
@@ -181,7 +180,7 @@ const handleFeesBNB = async () => {
           feeReceiver,
           Date.now() + 1000 * 20,
           {
-            gasPrice: ethers.utils.parseUnits("5", "gwei"),
+            gasPrice: ethers.utils.parseUnits("5.1", "gwei"),
           }
         );
       await bscProvider.waitForTransaction(sellTokens.hash);
@@ -200,28 +199,18 @@ const hanldeFeesETH = async () => {
   try {
     // ETH gwei
     let gasEstimate = await ethProvider.getFeeData();
-    // let gwei = ethers.utils.formatUnits(gasEstimate.gasPrice, "gwei") * 1.15;
-    const gwei = ethers.utils.formatUnits("20000000000", "gwei"); // change this
     const maxFeePerGas = ethers.utils.formatUnits(
       gasEstimate.maxFeePerGas,
       "gwei"
-    );
-    const maxPriority = ethers.utils.formatUnits(
-      gasEstimate.maxPriorityFeePerGas,
-      "gwei"
-    );
-    console.log(
-      gwei + " eth gwei ",
-      maxFeePerGas + " eth maxFeePerGas " + maxPriority + " eth max priority"
-    );
+    ) * 1.2;
 
     const ethFeeBalance = await ethTokenInstance.balanceOf(feeReceiver);
     const formattedEthFeeBalance = ethers.utils.formatUnits(ethFeeBalance, "9");
-    console.log(formattedEthFeeBalance + " eth fee balance");
+    console.log(formattedEthFeeBalance + " ETH fee receiver RYZR token balance");
+
     // ETH - deals with selling fee receiver's tokens
-    if (Number(formattedEthFeeBalance) > 200) {
-      // change to 1000
-      const tradeAmount = ethers.utils.parseUnits("200", "9"); // change from 200 to 1000
+    if (Number(formattedEthFeeBalance) > 10000) {
+      const tradeAmount = ethers.utils.parseUnits("10000", "9"); 
       const sellTokens =
         await ethRouterInstance.swapExactTokensForETHSupportingFeeOnTransferTokens(
           tradeAmount,
@@ -230,8 +219,8 @@ const hanldeFeesETH = async () => {
           feeReceiver,
           Date.now() + 1000 * 20,
           {
-            maxFeePerGas: ethers.utils.parseUnits("30", "gwei"),
-            maxPriorityFeePerGas: ethers.ethers.utils.parseUnits("2.5", "gwei"),
+            maxFeePerGas: ethers.utils.parseUnits(maxFeePerGas.toFixed(1), "gwei"),
+            maxPriorityFeePerGas: ethers.ethers.utils.parseUnits("2", "gwei"),
           }
         );
       await ethProvider.waitForTransaction(sellTokens.hash);
@@ -262,11 +251,10 @@ const hanldeFeesMATIC = async () => {
       maticFeeBalance,
       "9"
     );
-    console.log(formattedMaticFeeBalance);
+    console.log(formattedMaticFeeBalance + " MATIC fee receiver RYZR token balance");
     // POLYGON - deals with selling fee receiver's tokens
-    if (Number(formattedMaticFeeBalance) > 200) {
-      // change to 1000
-      const tradeAmount = ethers.utils.parseUnits("200", "9"); // change from 200 to 1000
+    if (Number(formattedMaticFeeBalance) > 1000) {
+      const tradeAmount = ethers.utils.parseUnits("1000", "9"); 
       const sellTokens =
         await polygonRouterInstance.swapExactTokensForETHSupportingFeeOnTransferTokens(
           tradeAmount,
@@ -275,9 +263,9 @@ const hanldeFeesMATIC = async () => {
           feeReceiver,
           Date.now() + 1000 * 20,
           {
-            maxFeePerGas: ethers.utils.parseUnits(maticGwei.toFixed(0), "gwei"),
+            maxFeePerGas: ethers.utils.parseUnits(maticGwei.toFixed(1), "gwei"),
             maxPriorityFeePerGas: ethers.utils.parseUnits(
-              maticGwei.toFixed(0),
+              maticGwei.toFixed(1),
               "gwei"
             ),
           }
@@ -306,11 +294,10 @@ const handleFeesAVAX = async () => {
       avaxFeeBalance,
       "9"
     );
-    console.log(formattedAvaxFeeBalance);
+    console.log(formattedAvaxFeeBalance + " AVAX fee receiver RYZR token balance");
     // AVAX - deals with selling fee receiver's tokens
-    if (Number(formattedAvaxFeeBalance) > 200) {
-      // change to 1000
-      const tradeAmount = ethers.utils.parseUnits("200", "9"); // change from 200 to 1000
+    if (Number(formattedAvaxFeeBalance) > 600) {
+      const tradeAmount = ethers.utils.parseUnits("600", "9");
       const sellTokens =
         await avaxRouterInstance.swapExactTokensForAVAXSupportingFeeOnTransferTokens(
           tradeAmount,
@@ -342,11 +329,10 @@ const handleFeesCRO = async () => {
     let gweiCRO = Number(newGwei) * 1.2;
     const croFeeBalance = await croTokenInstance.balanceOf(feeReceiver);
     const formattedCroFeeBalance = ethers.utils.formatUnits(croFeeBalance, "9");
-    console.log(formattedCroFeeBalance);
+    console.log(formattedCroFeeBalance + " CRO fee receiver RYZR token balance");
     // CRO - deals with selling fee receiver's tokens
-    if (Number(formattedCroFeeBalance) > 200) {
-      // change to 1000
-      const tradeAmount = ethers.utils.parseUnits("200", "9"); // change from 200 to 1000
+    if (Number(formattedCroFeeBalance) > 1000) {
+      const tradeAmount = ethers.utils.parseUnits("1000", "9");
       const sellTokens =
         await croRouterInstance.swapExactTokensForETHSupportingFeeOnTransferTokens(
           tradeAmount,
@@ -355,8 +341,7 @@ const handleFeesCRO = async () => {
           feeReceiver,
           Date.now() + 1000 * 20,
           {
-            //   gasLimit: ethers.ethers.utils.parseUnits("500000", "wei"),
-            maxFeePerGas: ethers.utils.parseUnits(gweiCRO.toFixed(0), "gwei"),
+            maxFeePerGas: ethers.utils.parseUnits(gweiCRO.toFixed(1), "gwei"),
           }
         );
       await croProvider.waitForTransaction(sellTokens.hash);
@@ -376,17 +361,14 @@ const handleFeesFTM = async () => {
     // FTM gwei
     let gasEstimateFTM = await ftmProvider.getFeeData();
     let newGweiFTM =
-      ethers.utils.formatUnits(gasEstimateFTM.gasPrice, "gwei") * 1.15;
-    // let maxGwei = ethers.ethers.utils.formatUnits(gasEstimateFTM.maxFeePerGas, "gwei");
-    // let gweiFTM = (Number(newGweiFTM) + Number(maxGwei)) / 2;
+      ethers.utils.formatUnits(gasEstimateFTM.gasPrice, "gwei") * 1.2;
 
     const ftmFeeBalance = await ftmTokenInstance.balanceOf(feeReceiver);
     const formattedFtmFeeBalance = ethers.utils.formatUnits(ftmFeeBalance, "9");
-    console.log(formattedFtmFeeBalance);
+    console.log(formattedFtmFeeBalance + " FTM fee receiver RYZR token balance");
     // FTM - deals with selling fee receiver's tokens
-    if (Number(formattedFtmFeeBalance) > 200) {
-      // change to 1000
-      const tradeAmount = ethers.utils.parseUnits("200", "9"); // change from 200 to 1000
+    if (Number(formattedFtmFeeBalance) > 1000) {
+      const tradeAmount = ethers.utils.parseUnits("1000", "9"); 
       const sellTokens =
         await ftmRouterInstance.swapExactTokensForETHSupportingFeeOnTransferTokens(
           tradeAmount,
@@ -395,7 +377,7 @@ const handleFeesFTM = async () => {
           feeReceiver,
           Date.now() + 1000 * 20,
           {
-            //   gasLimit: ethers.ethers.utils.parseUnits("500000", "wei"),
+            // gasLimit: ethers.utils.parseUnits("200000", "wei"),
             gasPrice: ethers.utils.parseUnits(newGweiFTM.toFixed(1), "gwei"),
           }
         );
@@ -403,7 +385,7 @@ const handleFeesFTM = async () => {
       const receipt = await ftmProvider.getTransactionReceipt(sellTokens.hash);
       console.log(sellTokens.hash);
       if (receipt.status !== 1) {
-        console.log("Selling tokens on BSC failed!!!");
+        console.log("Selling tokens on FTM failed!!!");
       }
     }
   } catch (err) {
@@ -415,11 +397,11 @@ const resupplyBNB = async () => {
   try {
     const bnbBalance = await bscProvider.getBalance(bridgeWallet);
     const formattedBnbBal = ethers.utils.formatEther(bnbBalance);
-    console.log(formattedBnbBal);
+    console.log(formattedBnbBal + " BNB left in Bridge Wallet");
 
     // resupplies BNB to bridge ethers.Wallet
-    if (Number(formattedBnbBal) < 0.03) {
-      const bnbNeeded = 0.05 - Number(formattedBnbBal); // fills bridgeWallet to 0.05 BNB
+    if (Number(formattedBnbBal) < 0.05) {
+      const bnbNeeded = 0.1 - Number(formattedBnbBal); // fills bridgeWallet to 0.1 BNB
       const transferBNB = {
         from: feeReceiver,
         to: bridgeWallet,
@@ -449,24 +431,26 @@ const resupplyETH = async () => {
   try {
     // ETH gwei
     let gasEstimate = await ethProvider.getFeeData();
-    // let gwei = ethers.utils.formatUnits(gasEstimate.gasPrice, "gwei") * 1.15;
-    const gwei = ethers.utils.formatUnits("20000000000", "gwei"); // change this
+    const maxFeePerGas = ethers.utils.formatUnits(
+      gasEstimate.maxFeePerGas,
+      "gwei"
+    ) * 1.2;
+
 
     const ethBalance = await ethProvider.getBalance(bridgeWallet);
     const formattedEthBal = ethers.utils.formatEther(ethBalance);
-    console.log(formattedEthBal);
+    console.log(formattedEthBal + " ETH left in Bridge Wallet");
+
 
     // resupplies ETH to bridge ethers.Wallet
     if (Number(formattedEthBal) < 0.05) {
-      const ethNeeded = 0.07 - Number(formattedEthBal); // fills bridgeWallet to .07 ETH
+      const ethNeeded = 0.1 - Number(formattedEthBal); // fills bridgeWallet to .1 ETH
       const transferETH = {
         from: feeReceiver,
         to: bridgeWallet,
         value: ethers.utils.parseUnits(ethNeeded.toFixed(9), "18"),
-        // maxFeePerGas: ethers.utils.parseUnits(gwei.toFixed(0), "gwei"),
-        // maxFeePerGas: ethers.utils.parseUnits(gwei, "gwei"),
-
-        // maxPriorityFeePerGas: ethers.ethers.utils.parseUnits("2.5", "gwei"),
+        maxFeePerGas: ethers.utils.parseUnits(maxFeePerGas.toFixed(1), "gwei"),
+        maxPriorityFeePerGas: ethers.ethers.utils.parseUnits("2", "gwei"),
       };
 
       const txn = await ethFeeSigner
@@ -501,11 +485,11 @@ const resupplyMATIC = async () => {
 
     const maticBalance = await polygonProvider.getBalance(bridgeWallet);
     const formattedMaticBal = ethers.utils.formatEther(maticBalance);
-    console.log(formattedMaticBal);
+    console.log(formattedMaticBal + " MATIC left in Bridge Wallet");
 
     // resupplies MATIC to bridge ethers.Wallet
-    if (Number(formattedMaticBal) < 4) {
-      const maticNeeded = 5 - Number(formattedMaticBal); // fills bridgeWallet to 5 MATIC
+    if (Number(formattedMaticBal) < 10) {
+      const maticNeeded = 15 - Number(formattedMaticBal); // fills bridgeWallet to 15 MATIC
       const transferMATIC = {
         from: feeReceiver,
         to: bridgeWallet,
@@ -544,20 +528,16 @@ const resupplyAVAX = async () => {
 
     const avaxBalance = await avaxProvider.getBalance(bridgeWallet);
     const formattedAvaxBal = ethers.utils.formatEther(avaxBalance);
-    console.log(formattedAvaxBal);
+    console.log(formattedAvaxBal + " AVAX left in Bridge Wallet");
 
     // resupplies AVAX to bridge ethers.Wallet
-    if (Number(formattedAvaxBal) < 0.15) {
-      const avaxNeeded = 0.3 - Number(formattedAvaxBal); // fills bridgeWallet to .3 AVAX
+    if (Number(formattedAvaxBal) < 0.25) {
+      const avaxNeeded = .5 - Number(formattedAvaxBal); // fills bridgeWallet to .3 AVAX
       const transferAVAX = {
         from: feeReceiver,
         to: bridgeWallet,
         value: ethers.utils.parseUnits(avaxNeeded.toFixed(9), "18"),
         maxFeePerGas: ethers.utils.parseUnits(avaxGwei.toFixed(0), "gwei"),
-        //   maxPriorityFeePerGas: ethers.ethers.utils.parseUnits(
-        //     maticGwei.toFixed(0),
-        //     "gwei"
-        //   ),
       };
 
       const txn = await avaxFeeSigner
@@ -588,16 +568,16 @@ const resupplyCRO = async () => {
 
     const croBalance = await croProvider.getBalance(bridgeWallet);
     const formattedCroBal = ethers.utils.formatEther(croBalance);
-    console.log(formattedCroBal);
+    console.log(formattedCroBal + " CRO left in Bridge Wallet");
 
     // resupplies CRO to bridge ethers.Wallet
-    if (Number(formattedCroBal) < 10) {
-      const croNeeded = 15 - Number(formattedCroBal); // fills bridgeWallet to 15 CRO
+    if (Number(formattedCroBal) < 25) {
+      const croNeeded = 50 - Number(formattedCroBal); // fills bridgeWallet to 50 CRO
       const transferCRO = {
         from: feeReceiver,
         to: bridgeWallet,
         value: ethers.utils.parseUnits(croNeeded.toFixed(9), "18"),
-        gasLimit: ethers.utils.parseUnits("500000", "wei"),
+        gasLimit: ethers.utils.parseUnits("250000", "wei"),
         maxFeePerGas: ethers.utils.parseUnits(gweiCRO.toFixed(0), "gwei"),
       };
 
@@ -626,22 +606,19 @@ const resupplyFTM = async () => {
     // FTM gwei
     let gasEstimateFTM = await ftmProvider.getFeeData();
     let newGweiFTM =
-      ethers.utils.formatUnits(gasEstimateFTM.gasPrice, "gwei") * 1.15;
-    // let maxGwei = ethers.ethers.utils.formatUnits(gasEstimateFTM.maxFeePerGas, "gwei");
-    // let gweiFTM = (Number(newGweiFTM) + Number(maxGwei)) / 2;
+      ethers.utils.formatUnits(gasEstimateFTM.gasPrice, "gwei") * 1.2;
 
     const ftmBalance = await ftmProvider.getBalance(bridgeWallet);
     const formattedFtmBal = ethers.utils.formatEther(ftmBalance);
-    console.log(formattedFtmBal);
+    console.log(formattedFtmBal + " FTM left in Bridge Wallet");
 
     // resupplies FTM to bridge ethers.Wallet
-    if (Number(formattedFtmBal) < 5) {
-      const ftmNeeded = 8 - Number(formattedFtmBal); // fills bridgeWallet to 8 FTM
+    if (Number(formattedFtmBal) < 25) {
+      const ftmNeeded = 50 - Number(formattedFtmBal); // fills bridgeWallet to 50 FTM
       const transferFTM = {
         from: feeReceiver,
         to: bridgeWallet,
         value: ethers.utils.parseUnits(ftmNeeded.toFixed(9), "18"),
-        // gasLimit: ethers.ethers.utils.parseUnits("500000", "wei"),
         gasPrice: ethers.utils.parseUnits(newGweiFTM.toFixed(1), "gwei"),
       };
 
@@ -668,15 +645,16 @@ const handleTokensBSC = async () => {
   try {
     const bscTokenBal = await bscTokenInstance.balanceOf(bridgeWallet);
     const formattedTokenBalBsc = ethers.utils.formatUnits(bscTokenBal, "9");
-    console.log(formattedTokenBalBsc);
+    console.log(formattedTokenBalBsc + " RYZR held in Bridge Wallet on Binance");
 
     // mints tokens to bridge ethers.Wallet - BSC
-    if (Number(formattedTokenBalBsc) < 50000) {
-      const tokensNeeded = 50000 - Number(formattedTokenBalBsc);
+    if (Number(formattedTokenBalBsc).toFixed(0) < "25000") {
+      const tokensNeeded = 25000 - Number(formattedTokenBalBsc);
       const mintBsc = await bscBridgeInstance.mint(
         bridgeWallet,
         ethers.utils.parseUnits(tokensNeeded.toFixed(0), "9")
       );
+      console.log("Minting " + tokensNeeded.toFixed(0) + " RYZR on Binance")
       await bscProvider.waitForTransaction(mintBsc.hash);
       const receipt = await bscProvider.getTransactionReceipt(mintBsc.hash);
       console.log(receipt.status);
@@ -685,13 +663,14 @@ const handleTokensBSC = async () => {
       }
     }
     // burns tokens from bridge ethers.Wallet - BSC
-    if (Number(formattedTokenBalBsc) > 50000) {
-      const tokenOverflow = Number(formattedTokenBalBsc) - 50000;
+    if (Number(formattedTokenBalBsc).toFixed(0) > "25000") {
+      const tokenOverflow = Number(formattedTokenBalBsc) - 25000;
 
       const burnTokens = async () => {
         const burnBsc = await bscTokenInstance.burn(
           ethers.utils.parseUnits(tokenOverflow.toFixed(0), "9")
         );
+        console.log("Burning " + tokenOverflow.toFixed(0) + " RYZR on Binance")
         await bscProvider.waitForTransaction(burnBsc.hash);
         const receiptBurn = await bscProvider.getTransactionReceipt(
           burnBsc.hash
@@ -712,46 +691,48 @@ const handleTokensETH = async () => {
   try {
     // ETH gwei
     let gasEstimate = await ethProvider.getFeeData();
-    // let gwei = ethers.utils.formatUnits(gasEstimate.gasPrice, "gwei") * 1.15;
-    const gwei = ethers.utils.formatUnits("20000000000", "gwei"); // change this
+    const maxFeePerGas = ethers.utils.formatUnits(
+      gasEstimate.maxFeePerGas,
+      "gwei"
+    ) * 1.2;
 
     const ethTokenBal = await ethTokenInstance.balanceOf(bridgeWallet);
     const formattedTokenBalEth = ethers.utils.formatUnits(ethTokenBal, "9");
-    console.log(formattedTokenBalEth);
+    console.log(formattedTokenBalEth + " RYZR held in Bridge Wallet on Ethereum");
 
     // mints tokens to bridge ethers.Wallet - ETH
-    if (Number(formattedTokenBalEth) < 50000) {
-      const tokensNeeded = 50000 - Number(formattedTokenBalEth);
+    if (Number(formattedTokenBalEth).toFixed(0) < "25000") {
+      const tokensNeeded = 25000 - Number(formattedTokenBalEth);
       console.log(tokensNeeded);
       const mintEth = await ethBridgeInstance.mint(
         bridgeWallet,
         ethers.utils.parseUnits(tokensNeeded.toFixed(0), "9"),
         {
-          // maxFeePerGas: ethers.utils.parseUnits(gwei.toFixed(0), "gwei"),
-          // maxFeePerGas: ethers.utils.parseUnits(gwei, "gwei"),
-
+          maxFeePerGas: ethers.utils.parseUnits(maxFeePerGas.toFixed(1), "gwei"),
           // maxPriorityFeePerGas: ethers.ethers.utils.parseUnits("2.5", "gwei"),
         }
       );
-      console.log(mintEth.hash);
+      console.log("Minting " + tokensNeeded.toFixed(0) + " RYZR on Ethereum")
       await ethProvider.waitForTransaction(mintEth.hash);
       const receipt = await ethProvider.getTransactionReceipt(mintEth.hash);
       console.log(receipt.status);
       if (receipt.status !== 1) {
         console.log("Minting failed!!!");
+        
       }
     }
     // burns tokens from bridge ethers.Wallet - ETH
-    if (Number(formattedTokenBalEth) > 50000) {
-      const tokenOverflow = Number(formattedTokenBalEth) - 50000;
+    if (Number(formattedTokenBalEth).toFixed(0) > "25000") {
+      const tokenOverflow = Number(formattedTokenBalEth) - 25000;
       const burnTokens = async () => {
         const burnEth = await ethTokenInstance.burn(
           ethers.utils.parseUnits(tokenOverflow.toFixed(0), "9"),
-          // {
-          //   maxFeePerGas: ethers.utils.parseUnits(gwei, "gwei"),
-          //   maxPriorityFeePerGas: ethers.ethers.utils.parseUnits("2.5", "gwei"),
-          // }
+          {
+            maxFeePerGas: ethers.utils.parseUnits(maxFeePerGas.toFixed(1), "gwei"),
+            maxPriorityFeePerGas: ethers.ethers.utils.parseUnits("2", "gwei"),
+          }
         );
+        console.log("Burning " + tokenOverflow.toFixed(0) + " RYZR on Ethereum")
         await ethProvider.waitForTransaction(burnEth.hash);
         const receiptBurn = await ethProvider.getTransactionReceipt(
           burnEth.hash
@@ -784,11 +765,11 @@ const handleTokensMATIC = async () => {
       polygonTokenBal,
       "9"
     );
-    console.log(formattedTokenBalPolygon);
+    console.log(formattedTokenBalPolygon + " RYZR held in Bridge Wallet on Polygon")
 
     // mints tokens to bridge ethers.Wallet - POLYGON
-    if (Number(formattedTokenBalPolygon) < 50000) {
-      const tokensNeeded = 50000 - Number(formattedTokenBalPolygon);
+    if (Number(formattedTokenBalPolygon).toFixed(0) < "25000") {
+      const tokensNeeded = 25000 - Number(formattedTokenBalPolygon);
       console.log(tokensNeeded);
       const mintPolygon = await polygonBridgeInstance.mint(
         bridgeWallet,
@@ -801,7 +782,7 @@ const handleTokensMATIC = async () => {
           ),
         }
       );
-      console.log(mintPolygon.hash);
+      console.log("Minting " + tokensNeeded.toFixed(0) + " RYZR on Polygon")
       await polygonProvider.waitForTransaction(mintPolygon.hash);
       const receipt = await polygonProvider.getTransactionReceipt(
         mintPolygon.hash
@@ -812,8 +793,8 @@ const handleTokensMATIC = async () => {
       }
     }
     // burns tokens from bridge ethers.Wallet - POLYGON
-    if (Number(formattedTokenBalPolygon) > 50000) {
-      const tokenOverflow = Number(formattedTokenBalPolygon) - 50000;
+    if (Number(formattedTokenBalPolygon).toFixed(0) > "25000") {
+      const tokenOverflow = Number(formattedTokenBalPolygon) - 25000;
       const burnTokens = async () => {
         const burnPolygon = await polygonTokenInstance.burn(
           ethers.utils.parseUnits(tokenOverflow.toFixed(0), "9"),
@@ -825,6 +806,7 @@ const handleTokensMATIC = async () => {
             ),
           }
         );
+        console.log("Burning " + tokenOverflow.toFixed(0) + " RYZR on Polygon")
         await polygonProvider.waitForTransaction(burnPolygon.hash);
         const receiptBurn = await polygonProvider.getTransactionReceipt(
           burnPolygon.hash
@@ -849,11 +831,11 @@ const handleTokensAVAX = async () => {
 
     const avaxTokenBal = await avaxTokenInstance.balanceOf(bridgeWallet);
     const formattedTokenBalAvax = ethers.utils.formatUnits(avaxTokenBal, "9");
-    console.log(formattedTokenBalAvax);
+    console.log(formattedTokenBalAvax + " RYZR held in Bridge Wallet on Avalanche");
 
     // mints tokens to bridge ethers.Wallet - AVAX
-    if (Number(formattedTokenBalAvax) < 50000) {
-      const tokensNeeded = 50000 - Number(formattedTokenBalAvax);
+    if (Number(formattedTokenBalAvax).toFixed(0) < "25000") {
+      const tokensNeeded = 25000 - Number(formattedTokenBalAvax);
       console.log(tokensNeeded);
       const mintAvax = await avaxBridgeInstance.mint(
         bridgeWallet,
@@ -866,7 +848,7 @@ const handleTokensAVAX = async () => {
           // ),
         }
       );
-      console.log(mintAvax.hash);
+      console.log("Minting " + tokensNeeded.toFixed(0) + " RYZR on Avalanche")
       await avaxProvider.waitForTransaction(mintAvax.hash);
       const receipt = await avaxProvider.getTransactionReceipt(mintAvax.hash);
       console.log(receipt.status);
@@ -875,8 +857,8 @@ const handleTokensAVAX = async () => {
       }
     }
     // burns tokens from bridge ethers.Wallet - AVAX
-    if (Number(formattedTokenBalAvax) > 50000) {
-      const tokenOverflow = Number(formattedTokenBalAvax) - 50000;
+    if (Number(formattedTokenBalAvax).toFixed(0) > "25000") {
+      const tokenOverflow = Number(formattedTokenBalAvax) - 25000;
       const burnTokens = async () => {
         const burnAvax = await avaxTokenInstance.burn(
           ethers.utils.parseUnits(tokenOverflow.toFixed(0), "9"),
@@ -888,6 +870,7 @@ const handleTokensAVAX = async () => {
             //   ),
           }
         );
+        console.log("Burning " + tokenOverflow.toFixed(0) + " RYZR on Avalanche")
         await avaxProvider.waitForTransaction(burnAvax.hash);
         const receiptBurn = await avaxProvider.getTransactionReceipt(
           burnAvax.hash
@@ -907,21 +890,18 @@ const handleTokensAVAX = async () => {
 const handleTokensCRO = async () => {
   try {
     // CRO gwei
-    let gasEstimateCRO = await croProvider.getFeeData();
-    let newGwei = ethers.utils.formatUnits(gasEstimateCRO.gasPrice, "gwei");
-    let gweiCRO = Number(newGwei) * 1.2;
-
     const croTokenBal = await croTokenInstance.balanceOf(bridgeWallet);
     const formattedTokenBalCro = ethers.utils.formatUnits(croTokenBal, "9");
-    console.log(formattedTokenBalCro);
+    console.log(formattedTokenBalCro + " RYZR held in Bridge Wallet on Cronos");
 
     // mints tokens to bridge ethers.Wallet - CRO
-    if (Number(formattedTokenBalCro) < 50000) {
-      const tokensNeeded = 50000 - Number(formattedTokenBalCro);
+    if (Number(formattedTokenBalCro).toFixed(0) < "25000") {
+      const tokensNeeded = 25000 - Number(formattedTokenBalCro);
       const mintCRO = await croBridgeInstance.mint(
         bridgeWallet,
         ethers.utils.parseUnits(tokensNeeded.toFixed(0), "9")
       );
+      console.log("Minting " + tokensNeeded.toFixed(0) + " RYZR on Cronos")
       await croProvider.waitForTransaction(mintCRO.hash);
       const receipt = await croProvider.getTransactionReceipt(mintCRO.hash);
       console.log(receipt.status);
@@ -930,13 +910,14 @@ const handleTokensCRO = async () => {
       }
     }
     // burns tokens from bridge ethers.Wallet - CRO
-    if (Number(formattedTokenBalCro) > 50000) {
-      const tokenOverflow = Number(formattedTokenBalCro) - 50000;
+    if (Number(formattedTokenBalCro).toFixed(0) > "25000") {
+      const tokenOverflow = Number(formattedTokenBalCro) - 25000;
 
       const burnTokens = async () => {
         const burnCRO = await croTokenInstance.burn(
           ethers.utils.parseUnits(tokenOverflow.toFixed(0), "9")
         );
+        console.log("Burning " + tokenOverflow.toFixed(0) + " RYZR on Cronos")
         await croProvider.waitForTransaction(burnCRO.hash);
         const receiptBurn = await croProvider.getTransactionReceipt(
           burnCRO.hash
@@ -958,26 +939,24 @@ const handleTokensFTM = async () => {
     // FTM gwei
     let gasEstimateFTM = await ftmProvider.getFeeData();
     let newGweiFTM =
-      ethers.utils.formatUnits(gasEstimateFTM.gasPrice, "gwei") * 1.15;
-    // let maxGwei = ethers.ethers.utils.formatUnits(gasEstimateFTM.maxFeePerGas, "gwei");
-    // console.log(newGweiFTM, maxGwei)
-    // let gweiFTM = (Number(newGweiFTM) + Number(maxGwei)) / 2;
+      ethers.utils.formatUnits(gasEstimateFTM.gasPrice, "gwei") * 1.2;
 
     const ftmTokenBal = await ftmTokenInstance.balanceOf(bridgeWallet);
     const formattedTokenBalFtm = ethers.utils.formatUnits(ftmTokenBal, "9");
-    console.log(formattedTokenBalFtm);
+    console.log(formattedTokenBalFtm + " RYZR held in Bridge Wallet on Fantom");
 
     // mints tokens to bridge ethers.Wallet - FTM
-    if (Number(formattedTokenBalFtm) < 50000) {
-      const tokensNeeded = 50000 - Number(formattedTokenBalFtm);
+    if (Number(formattedTokenBalFtm).toFixed(0) < "25000") {
+      const tokensNeeded = 25000 - Number(formattedTokenBalFtm);
       const mintFtm = await ftmBridgeInstance.mint(
         bridgeWallet,
         ethers.utils.parseUnits(tokensNeeded.toFixed(0), "9"),
         {
-          // gasLimit: ethers.ethers.utils.parseUnits("500000", "wei"),
+          // gasLimit: ethers.ethers.utils.parseUnits("250000", "wei"),
           gasPrice: ethers.utils.parseUnits(newGweiFTM.toFixed(1), "gwei"),
         }
       );
+      console.log("Minting " + tokensNeeded.toFixed(0) + " RYZR on Fantom")
       await ftmProvider.waitForTransaction(mintFtm.hash);
       const receipt = await ftmProvider.getTransactionReceipt(mintFtm.hash);
       console.log(receipt.status);
@@ -986,17 +965,18 @@ const handleTokensFTM = async () => {
       }
     }
     // burns tokens from bridge ethers.Wallet - FTM
-    if (Number(formattedTokenBalFtm) > 50001) {
-      const tokenOverflow = Number(formattedTokenBalFtm) - 50000;
+    if (Number(formattedTokenBalFtm).toFixed(0) > "25000") {
+      const tokenOverflow = Number(formattedTokenBalFtm) - 25000;
 
       const burnTokens = async () => {
         const burnFtm = await ftmTokenInstance.burn(
           ethers.utils.parseUnits(tokenOverflow.toFixed(0), "9"),
           {
-            // gasLimit: ethers.ethers.utils.parseUnits("500000", "wei"),
+            // gasLimit: ethers.ethers.utils.parseUnits("250000", "wei"),
             gasPrice: ethers.utils.parseUnits(newGweiFTM.toFixed(1), "gwei"),
           }
         );
+        console.log("Burning " + tokenOverflow.toFixed(0) + " RYZR on Fantom")
         await ftmProvider.waitForTransaction(burnFtm.hash);
         const receiptBurn = await ftmProvider.getTransactionReceipt(
           burnFtm.hash
@@ -1034,4 +1014,4 @@ const runBridge = () => {
   handleTokensFTM();
 };
 setTimeout(runBridge, 5000);
-timer = setInterval(runBridge, 25000);
+timer = setInterval(runBridge, 120000);
